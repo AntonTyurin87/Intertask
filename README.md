@@ -2,7 +2,6 @@
 
 <a href="https://codeclimate.com/github/AntonTyurin87/Intertask/maintainability"><img src="https://api.codeclimate.com/v1/badges/01c7db710db54263326d/maintainability" /></a>
 
-![Github Repository Size](https://img.shields.io/github/repo-size/AntonTyurin87/Intertask)
 
 # Intertask
 Систему для добавления и чтения постов и комментариев
