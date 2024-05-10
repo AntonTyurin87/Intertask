@@ -9,5 +9,5 @@ services:
       - POSTGRES_PASSWORD=12345
       - POSTGRES_USER=admin
     volumes:
-      - ./postgres/sql/PostsComments.sql:/docker-entrypoint-initdb.d/PostsComments.sql
+      - ./postgresdb/sql/PostsComments.sql:/docker-entrypoint-initdb.d/PostsComments.sql
     image: postgres:16.2-alpine3.19

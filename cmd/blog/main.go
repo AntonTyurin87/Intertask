@@ -1,22 +1,21 @@
 package main
 
 import (
-	"database/sql"
 	"net/http"
 
-	hendlerdb "intertask/hendlerdb"
-	postgresdb "intertask/postgresdb/workwithdb"
+	handler "intertask/handler"
+	postgresdb "intertask/postgresdb"
 
 	_ "github.com/lib/pq"
 )
 
-var db *sql.DB
-
 func main() {
 
-	db, _ = postgresdb.InitDB() // надо бы ошибку обработать
+	db, _ := postgresdb.InitDB() // надо бы ошибку обработать
 
-	handler := hendlerdb.HandlerPosts(db)
+	storage := postgresdb.NewStorage(db)
+
+	handler := handler.HandlerPosts(*storage)
 
 	http.Handle("/graphql", handler)
 	http.ListenAndServe(":8080", nil) //127.0.0.1:8080

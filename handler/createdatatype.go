@@ -1,4 +1,4 @@
-package hendlerdb
+package handler
 
 import "github.com/graphql-go/graphql"
 
@@ -11,10 +11,10 @@ func CreatePostType() *graphql.Object {
 				"id": &graphql.Field{
 					Type: graphql.Int,
 				},
-				"ptext": &graphql.Field{
+				"text": &graphql.Field{
 					Type: graphql.String,
 				},
-				"uid": &graphql.Field{
+				"postauthorid": &graphql.Field{
 					Type: graphql.Int,
 				},
 				"cancomment": &graphql.Field{

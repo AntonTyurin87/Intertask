@@ -1,19 +1,19 @@
-package hendlerdb
+package handler
 
 import (
-	"database/sql"
+	postgresdb "intertask/postgresdb"
 	"log"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 )
 
-func HandlerPosts(db *sql.DB) *handler.Handler {
+func HandlerPosts(storage postgresdb.Storage) *handler.Handler {
 	postType := CreatePostType()
 
 	schema, err := graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query: QueryType(postType, db),
+			Query: QueryType(postType, storage),
 		},
 	)
 

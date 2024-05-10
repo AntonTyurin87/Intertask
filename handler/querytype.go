@@ -1,14 +1,14 @@
-package hendlerdb
+package handler
 
 import (
-	"database/sql"
+	postgresdb "intertask/postgresdb"
 
 	"github.com/graphql-go/graphql"
 
 	_ "github.com/lib/pq"
 )
 
-func QueryType(postType *graphql.Object, db *sql.DB) *graphql.Object {
+func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "Query",
@@ -35,7 +35,9 @@ func QueryType(postType *graphql.Object, db *sql.DB) *graphql.Object {
 							offset = 0
 						}
 
-						return GetPosts(limit, offset, db)
+						//fmt.Println(p.)
+
+						return storage.GetPosts(limit, offset)
 					},
 				},
 			},
