@@ -1,3 +1,8 @@
+![Go Report](https://goreportcard.com/badge/github.com/AntonTyurin87/Intertask) ![Repository Top Language](https://img.shields.io/github/languages/top/AntonTyurin87/Intertask) ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/AntonTyurin87/Intertask)
+
+<a href="https://codeclimate.com/github/AntonTyurin87/Intertask/maintainability"><img src="https://api.codeclimate.com/v1/badges/01c7db710db54263326d/maintainability" /></a>
+
+![Github Repository Size](https://img.shields.io/github/repo-size/AntonTyurin87/Intertask)
 
 # Intertask
 Систему для добавления и чтения постов и комментариев
