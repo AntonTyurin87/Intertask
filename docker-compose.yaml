@@ -1,0 +1,13 @@
+version: '3.8'
+
+services: 
+  postgres:
+    container_name: db_post_comment
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=admin
+    volumes:
+      - ./postgres/sql/PostsComments.sql:/docker-entrypoint-initdb.d/PostsComments.sql
+    image: postgres:16.2-alpine3.19
