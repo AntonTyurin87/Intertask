@@ -1,7 +1,7 @@
 package postgresdb
 
+/*
 import (
-	"database/sql"
 	"strconv"
 
 	_ "github.com/lib/pq"
@@ -15,15 +15,18 @@ type Post struct {
 	CanComment   bool   `json:"cancomment"`
 }
 
+
 // Structure for working with a database
-type Storage struct {
-	db *sql.DB
-}
+
+	type Storage struct {
+		db *sql.DB
+	}
 
 // Constructor for new objects Storage struct
-func NewStorage(db *sql.DB) *Storage {
-	return &Storage{db: db}
-}
+
+	func NewStorage(db *sql.DB) *Storage {
+		return &Storage{db: db}
+	}
 
 func (db *Storage) GetPosts(limit int, offset int) ([]Post, error) {
 	var posts []Post
@@ -44,3 +47,4 @@ func (db *Storage) GetPosts(limit int, offset int) ([]Post, error) {
 	}
 	return posts, nil
 }
+*/

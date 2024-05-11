@@ -1,5 +1,6 @@
 package handler
 
+/*
 import (
 	postgresdb "intertask/postgresdb"
 	"log"
@@ -7,6 +8,7 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 )
+
 
 func HandlerPosts(storage postgresdb.Storage) *handler.Handler {
 	postType := CreatePostType()
@@ -28,3 +30,4 @@ func HandlerPosts(storage postgresdb.Storage) *handler.Handler {
 
 	return handler
 }
+*/

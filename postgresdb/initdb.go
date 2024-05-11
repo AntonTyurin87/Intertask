@@ -3,6 +3,8 @@ package postgresdb
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/lib/pq"
 )
 
 // Connecting to the database

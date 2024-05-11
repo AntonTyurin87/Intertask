@@ -1,7 +1,6 @@
 package handler
 
-import "github.com/graphql-go/graphql"
-
+/*
 // Создание объекта GraphQL для описания постов
 func CreatePostType() *graphql.Object {
 	return graphql.NewObject(
@@ -24,3 +23,4 @@ func CreatePostType() *graphql.Object {
 		},
 	)
 }
+*/

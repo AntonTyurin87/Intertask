@@ -1,5 +1,6 @@
 package handler
 
+/*
 import (
 	postgresdb "intertask/postgresdb"
 
@@ -44,3 +45,4 @@ func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Ob
 		},
 	)
 }
+*/
