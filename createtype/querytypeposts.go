@@ -1,20 +1,17 @@
-package handler
+package createtype
 
-/*
 import (
-	postgresdb "intertask/postgresdb"
+	"intertask/postgresdb"
 
 	"github.com/graphql-go/graphql"
-
-	_ "github.com/lib/pq"
 )
 
-func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
+func QueryTypePosts(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "Query",
 			Fields: graphql.Fields{
-				"Posts": &graphql.Field{
+				"posts": &graphql.Field{
 					Type: graphql.NewList(postType),
 					Args: graphql.FieldConfigArgument{
 						"limit": &graphql.ArgumentConfig{
@@ -38,11 +35,10 @@ func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Ob
 
 						//fmt.Println(p.)
 
-						return storage.GetPosts(limit, offset)
+						return postgresdb.AllPosts(&storage, limit, offset)
 					},
 				},
 			},
 		},
 	)
 }
-*/

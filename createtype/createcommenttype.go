@@ -1,4 +1,4 @@
-package handler
+package createtype
 
 import "github.com/graphql-go/graphql"
 

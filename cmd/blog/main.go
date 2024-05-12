@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"intertask/handler"
+	"intertask/createtype"
 	"intertask/postgresdb"
 
 	"github.com/graphql-go/graphql"
@@ -14,47 +14,54 @@ import (
 	// postgresdb "intertask/postgresdb"
 )
 
-type PostById interface {
-	GetPostById()
-}
-
-func GetPost(something PostById) {
-	something.GetPostById()
-}
-
 func main() {
 
 	db, _ := postgresdb.InitDB()
 
 	storage := postgresdb.NewStorage(db)
 
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: graphql.NewObject(
-			handler.CreateQueryType(handler.CreatePostType(handler.CreateCommentType(), *storage), *storage),
-		),
-	})
+	handler1 := HandlerPostComments(storage)
+	//handler2 := HandlerPosts(storage)
+
+	http.Handle("/graphql", handler1)
+	//http.Handle("/graphql", handler2)
+	log.Println("Server started at http://localhost:8080/graphql")
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func HandlerPosts(storage *postgresdb.Storage) *gqlhandler.Handler {
+	schema, err := graphql.NewSchema(
+		graphql.SchemaConfig{
+			Query: createtype.QueryTypePosts(createtype.CreateAllPostType(), *storage),
+		},
+	)
+
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)
 	}
+
 	handler := gqlhandler.New(&gqlhandler.Config{
 		Schema: &schema,
 	})
 
-	http.Handle("/graphql", handler)
-	log.Println("Server started at http://localhost:8080/graphql")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	return handler
 }
 
-/*
-func main() {
+func HandlerPostComments(storage *postgresdb.Storage) *gqlhandler.Handler {
+	schema, err := graphql.NewSchema(
+		graphql.SchemaConfig{
+			Query: createtype.QueryTypeOnePost(createtype.CreatePostType(createtype.CreateCommentType(), *storage), *storage),
+		},
+	)
 
-	db, _ := postgresdb.InitDB() // надо бы ошибку обработать
+	if err != nil {
+		log.Fatalf("failed to create new schema, error: %v", err)
+	}
 
-	storage := postgresdb.NewStorage(db)
+	handler := gqlhandler.New(&gqlhandler.Config{
+		Schema: &schema,
+	})
 
-	handler := handler.HandlerPosts(*storage)
-
-	http.Handle("/graphql", handler)
-	http.ListenAndServe(":8080", nil) //127.0.0.1:8080
+	return handler
 }
-*/

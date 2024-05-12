@@ -1,8 +1,8 @@
-package handler
+package createtype
 
-/*
-// Создание объекта GraphQL для описания постов
-func CreatePostType() *graphql.Object {
+import "github.com/graphql-go/graphql"
+
+func CreateAllPostType() *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "Post",
@@ -23,4 +23,3 @@ func CreatePostType() *graphql.Object {
 		},
 	)
 }
-*/

@@ -1,11 +1,11 @@
-package handler
+package createtype
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/graphql-go/graphql"
 
+	blogInterface "intertask/cmd/bloginterface"
 	postgresdb "intertask/postgresdb"
 )
 
@@ -27,11 +27,29 @@ func CreatePostType(commentType *graphql.Object, storage postgresdb.Storage) *gr
 			},
 			"comments": &graphql.Field{
 				Type: graphql.NewList(commentType),
+				Args: graphql.FieldConfigArgument{
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.Int,
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.Int,
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					post, _ := p.Source.(*postgresdb.Post)
+					post, _ := p.Source.(*blogInterface.Post)
 					log.Printf("fetching comments of post with id: %d", post.PID)
-					fmt.Println("1")
-					return storage.FetchCommentsByPostID(post.PID)
+					// Read limit
+					limit, _ := p.Args["limit"].(int)
+					if limit <= 0 || limit > 20 {
+						limit = 10
+					}
+					// Read offset
+					offset, _ := p.Args["offset"].(int)
+					if offset < 0 {
+						offset = 0
+					}
+
+					return postgresdb.CommentsByPostID(&storage, post.PID, limit, offset)
 				},
 			},
 		},
