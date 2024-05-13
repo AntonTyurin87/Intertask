@@ -38,7 +38,8 @@ func QueryType(storage postgresdb.Storage) *graphql.Object {
 					},
 				},
 				"post": &graphql.Field{
-					Type: PostType,
+					Type: CreatePostType(storage),
+					//Type: PostType,
 					//Type: CreatePostType(storage),
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
