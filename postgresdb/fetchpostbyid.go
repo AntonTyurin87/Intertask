@@ -12,6 +12,7 @@ import (
 type Blog interface {
 	FetchAllPosts(limit, offset int) ([]blogInterface.Post, error)
 	FetchPostByiD(id int) (*blogInterface.Post, error)
+	//FetchPostByiD(id int) ([]blogInterface.Post, error)
 	FetchCommentsByPostID(id, limit, offset int) ([]blogInterface.Comment, error)
 }
 
@@ -26,6 +27,11 @@ func PostById(b Blog, id int) (*blogInterface.Post, error) {
 	return b.FetchPostByiD(id) // From DB
 	// From memory
 }
+
+//func PostById(b Blog, id int) (*blogInterface.Post, error) {
+//return b.FetchPostByiD(id) // From DB
+// From memory
+//}
 
 // Blog interface function to retrieve comments by PostID
 func CommentsByPostID(b Blog, id, limit, offset int) ([]blogInterface.Comment, error) {
@@ -66,6 +72,31 @@ func (s *Storage) FetchAllPosts(limit int, offset int) ([]blogInterface.Post, er
 
 	return posts, nil
 }
+
+/*
+func (s *Storage) FetchPostByiD(id int) ([]blogInterface.Post, error) {
+
+	var err error
+
+	rows, err := s.DB.Query("SELECT id, text, postauthorid, cancomment FROM posts WHERE id = " + strconv.Itoa(id) + ";")
+
+	if err != nil {
+		return []blogInterface.Post{}, err
+	}
+	defer rows.Close()
+
+	var resultS []blogInterface.Post
+	var result blogInterface.Post
+
+	for rows.Next() {
+		if err = rows.Scan(&result.PID, &result.Text, &result.PostAuthorID, &result.CanComment); err != nil {
+			return []blogInterface.Post{}, err
+		}
+		resultS = append(resultS, result)
+	}
+	return resultS, nil
+}
+*/
 
 func (s *Storage) FetchPostByiD(id int) (*blogInterface.Post, error) {
 

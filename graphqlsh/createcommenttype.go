@@ -1,4 +1,4 @@
-package createtype
+package graphqlsh
 
 import "github.com/graphql-go/graphql"
 

@@ -1,15 +1,16 @@
-package createtype
+package graphqlsh
 
 import (
 	"intertask/postgresdb"
+	"log"
 
 	"github.com/graphql-go/graphql"
 )
 
-func QueryTypePosts(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
+func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
-			Name: "Query",
+			Name: "BlogQuery",
 			Fields: graphql.Fields{
 				"posts": &graphql.Field{
 					Type: graphql.NewList(postType),
@@ -36,6 +37,21 @@ func QueryTypePosts(postType *graphql.Object, storage postgresdb.Storage) *graph
 						//fmt.Println(p.)
 
 						return postgresdb.AllPosts(&storage, limit, offset)
+					},
+				},
+				"post": &graphql.Field{
+					Type: postType,
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.Int),
+						},
+					},
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						id := p.Args["id"]
+						v, _ := id.(int)
+						log.Printf("fetching post with id: %d", v)
+
+						return postgresdb.PostById(&storage, v)
 					},
 				},
 			},

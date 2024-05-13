@@ -1,26 +1,25 @@
-package createtype
+package graphqlsh
 
 import (
+	blogInterface "intertask/cmd/bloginterface"
+	"intertask/postgresdb"
 	"log"
 
 	"github.com/graphql-go/graphql"
-
-	blogInterface "intertask/cmd/bloginterface"
-	postgresdb "intertask/postgresdb"
 )
 
 func CreatePostType(commentType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name: "Post",
 		Fields: graphql.Fields{
-			"postauthorid": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
 			"id": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Int),
+				Type: graphql.Int,
 			},
 			"text": &graphql.Field{
 				Type: graphql.String,
+			},
+			"postauthorid": &graphql.Field{
+				Type: graphql.Int,
 			},
 			"cancomment": &graphql.Field{
 				Type: graphql.Boolean,
@@ -53,5 +52,6 @@ func CreatePostType(commentType *graphql.Object, storage postgresdb.Storage) *gr
 				},
 			},
 		},
-	})
+	},
+	)
 }
