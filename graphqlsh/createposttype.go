@@ -8,9 +8,9 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func CreatePostType(commentType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
+func CreatePostType(storage postgresdb.Storage) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
-		Name: "Post",
+		Name: "Post2",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.Int,
@@ -25,7 +25,7 @@ func CreatePostType(commentType *graphql.Object, storage postgresdb.Storage) *gr
 				Type: graphql.Boolean,
 			},
 			"comments": &graphql.Field{
-				Type: graphql.NewList(commentType),
+				Type: graphql.NewList(CommentType),
 				Args: graphql.FieldConfigArgument{
 					"limit": &graphql.ArgumentConfig{
 						Type: graphql.Int,

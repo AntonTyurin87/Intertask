@@ -33,9 +33,20 @@ func main() {
 }
 
 func Handler(storage *postgresdb.Storage) *gqlhandler.Handler {
+
+	/*
+		schema, err := graphql.NewSchema(
+			graphql.SchemaConfig{
+				Query: graphqlsh.QueryType(*storage),
+			},
+		)
+	*/
+
 	schema, err := graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query: graphqlsh.QueryType(graphqlsh.CreatePostType(graphqlsh.CreateCommentType(), *storage), *storage),
+			Query: graphqlsh.QueryType(*storage),
+			//Mutation: graphqlsh.MutationType(graphqlsh.CreatePostType(*storage), *storage),
+			Mutation: graphqlsh.MutationType(*storage),
 		},
 	)
 

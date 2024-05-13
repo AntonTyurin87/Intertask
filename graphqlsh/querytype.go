@@ -1,19 +1,20 @@
 package graphqlsh
 
 import (
+	//"intertask/graphqlsh"
 	"intertask/postgresdb"
-	"log"
 
 	"github.com/graphql-go/graphql"
 )
 
-func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
+// func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
+func QueryType(storage postgresdb.Storage) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "BlogQuery",
 			Fields: graphql.Fields{
 				"posts": &graphql.Field{
-					Type: graphql.NewList(postType),
+					Type: graphql.NewList(PostType),
 					Args: graphql.FieldConfigArgument{
 						"limit": &graphql.ArgumentConfig{
 							Type: graphql.Int,
@@ -33,14 +34,12 @@ func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Ob
 						if offset < 0 {
 							offset = 0
 						}
-
-						//fmt.Println(p.)
-
 						return postgresdb.AllPosts(&storage, limit, offset)
 					},
 				},
 				"post": &graphql.Field{
-					Type: postType,
+					Type: PostType,
+					//Type: CreatePostType(storage),
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.Int),
@@ -49,7 +48,8 @@ func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Ob
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 						id := p.Args["id"]
 						v, _ := id.(int)
-						log.Printf("fetching post with id: %d", v)
+						// Read limit
+						//log.Printf("fetching post with id: %d", v)
 
 						return postgresdb.PostById(&storage, v)
 					},
