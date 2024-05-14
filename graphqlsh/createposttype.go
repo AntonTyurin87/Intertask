@@ -2,13 +2,11 @@ package graphqlsh
 
 import (
 	blogInterface "intertask/cmd/bloginterface"
-	"intertask/postgresdb"
-	"log"
 
 	"github.com/graphql-go/graphql"
 )
 
-func CreatePostType(storage postgresdb.Storage) *graphql.Object {
+func CreatePostType(storage Blog) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name: "Post2",
 		Fields: graphql.Fields{
@@ -36,7 +34,6 @@ func CreatePostType(storage postgresdb.Storage) *graphql.Object {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					post, _ := p.Source.(*blogInterface.Post)
-					log.Printf("fetching comments of post with id: %d", post.PID)
 					// Read limit
 					limit, _ := p.Args["limit"].(int)
 					if limit <= 0 || limit > 20 {
@@ -48,7 +45,8 @@ func CreatePostType(storage postgresdb.Storage) *graphql.Object {
 						offset = 0
 					}
 
-					return postgresdb.CommentsByPostID(&storage, post.PID, limit, offset)
+					return storage.FetchCommentsByPostID(post.PID, limit, offset)
+
 				},
 			},
 		},

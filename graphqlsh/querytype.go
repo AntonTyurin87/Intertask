@@ -2,13 +2,24 @@ package graphqlsh
 
 import (
 	//"intertask/graphqlsh"
-	"intertask/postgresdb"
 
 	"github.com/graphql-go/graphql"
+
+	blogInterface "intertask/cmd/bloginterface"
 )
 
+// Blog Interface
+type Blog interface {
+	FetchAllPosts(limit, offset int) ([]blogInterface.Post, error)
+	FetchPostByiD(id int) (*blogInterface.Post, error)
+	FetchCommentsByPostID(id, limit, offset int) ([]blogInterface.Comment, error)
+	CreateNewPost(newPost *blogInterface.Post) (*blogInterface.Post, error)
+	CreateNewComment(newComment *blogInterface.Comment) (*blogInterface.Comment, error)
+	CorrectPost(correctPost *blogInterface.Post) (*blogInterface.Post, error)
+}
+
 // func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
-func QueryType(storage postgresdb.Storage) *graphql.Object {
+func QueryType(storage Blog) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "BlogQuery",
@@ -34,7 +45,7 @@ func QueryType(storage postgresdb.Storage) *graphql.Object {
 						if offset < 0 {
 							offset = 0
 						}
-						return postgresdb.AllPosts(&storage, limit, offset)
+						return storage.FetchAllPosts(limit, offset)
 					},
 				},
 				"post": &graphql.Field{
@@ -52,7 +63,7 @@ func QueryType(storage postgresdb.Storage) *graphql.Object {
 						// Read limit
 						//log.Printf("fetching post with id: %d", v)
 
-						return postgresdb.PostById(&storage, v)
+						return storage.FetchPostByiD(v)
 					},
 				},
 			},
