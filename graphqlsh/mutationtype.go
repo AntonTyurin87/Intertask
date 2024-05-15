@@ -1,6 +1,7 @@
 package graphqlsh
 
 import (
+	"fmt"
 	blogInterface "intertask/cmd/bloginterface"
 
 	"github.com/graphql-go/graphql"
@@ -73,9 +74,6 @@ func MutationType(storage Blog) *graphql.Object {
 			},
 			"createcomment": &graphql.Field{
 				Type: CommentType,
-				//Type: CreatePostType(storage),
-				//Type: graphql.NewList(CreatePostType(storage)),
-				//Description: "Create new Post",
 				Args: graphql.FieldConfigArgument{
 					"pid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
@@ -92,10 +90,14 @@ func MutationType(storage Blog) *graphql.Object {
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
+					text, _ := params.Args["text"].(string)
 					uid := params.Args["uid"].(int)
 					pid, _ := params.Args["pid"].(int)
-					peid, _ := params.Args["peid"].(int)
-					text, _ := params.Args["text"].(string)
+					peid, err := params.Args["peid"].(int)
+					if !err {
+						fmt.Println("1")
+						peid = 0
+					}
 
 					newComment := blogInterface.Comment{
 						UserID:   uid,
@@ -104,6 +106,33 @@ func MutationType(storage Blog) *graphql.Object {
 						Text:     text,
 					}
 					return storage.CreateNewComment(&newComment)
+				},
+			},
+			"dosubscription": &graphql.Field{
+				Type: UserSubscription,
+				Args: graphql.FieldConfigArgument{
+					"uid": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"pid": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"confirmation": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Boolean),
+					},
+				},
+				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+
+					confirmation, _ := params.Args["confirmation"].(bool)
+					uid, _ := params.Args["uid"].(int)
+					pid, _ := params.Args["pid"].(int)
+
+					newSubscription := blogInterface.UserSubscription{
+						UserID:       uid,
+						PostID:       pid,
+						Сonfirmation: confirmation,
+					}
+					return storage.CreateUserSubscription(&newSubscription)
 				},
 			},
 		},

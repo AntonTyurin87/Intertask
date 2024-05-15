@@ -46,3 +46,22 @@ var CommentType = graphql.NewObject(graphql.ObjectConfig{
 		},
 	},
 })
+
+var UserSubscription = graphql.NewObject(graphql.ObjectConfig{
+	Name: "UserSubscription",
+	Fields: graphql.Fields{
+		"id": &graphql.Field{
+			Type: graphql.NewNonNull(graphql.Int),
+		},
+		"uid": &graphql.Field{
+			Type: graphql.NewNonNull(graphql.Int),
+		},
+		"pid": &graphql.Field{
+			Type: graphql.NewNonNull(graphql.Int),
+		},
+		"confirmation": &graphql.Field{
+			Type: graphql.NewNonNull(graphql.Boolean),
+		},
+	},
+},
+)

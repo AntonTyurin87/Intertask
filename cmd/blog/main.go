@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -20,20 +21,59 @@ func main() {
 
 	storage := postgresdb.NewStorage(db)
 
-	handler3 := Handler(storage)
+	schema, _ := graphql.NewSchema(
+		graphql.SchemaConfig{
+			Query:        graphqlsh.QueryType(storage),
+			Mutation:     graphqlsh.MutationType(storage),
+			Subscription: graphqlsh.SubscriptionType(storage),
+		})
 
+	//handler3 := Handler(storage)
+
+	handler3 := gqlhandler.New(&gqlhandler.Config{
+		Schema: &schema,
+	})
+
+	/*
+		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
+			result := executeQuery(r.URL.Query().Get("query"), schema)
+			json.NewEncoder(w).Encode(result)
+		})
+	*/
 	http.Handle("/graphql", handler3)
 	log.Println("Server started at http://localhost:8080/graphql")
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
+/////////////////////////////////////////////////////
+/*
+func executeQuery(query string, schema graphql.Schema) *graphql.Result {
+	result := graphql.Do(graphql.Params{
+			Schema:        schema,
+			RequestString: query,
+	})
+	if len(result.Errors) > 0 {
+			fmt.Printf("wrong result, unexpected errors: %v", result.Errors)
+	}
+	return result
+}
+
+
+	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
+		result := executeQuery(r.URL.Query().Get("query"), schema)
+		json.NewEncoder(w).Encode(result)
+	})
+
+///////////////////////////////////////////////////////////
+
 func Handler(storage graphqlsh.Blog) *gqlhandler.Handler {
 
 	schema, err := graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query:    graphqlsh.QueryType(storage),
-			Mutation: graphqlsh.MutationType(storage),
+			Query:        graphqlsh.QueryType(storage),
+			Mutation:     graphqlsh.MutationType(storage),
+			Subscription: graphqlsh.SubscriptionType(storage),
 		},
 	)
 
@@ -46,4 +86,15 @@ func Handler(storage graphqlsh.Blog) *gqlhandler.Handler {
 	})
 
 	return handler
+}
+*/
+func executeQuery(query string, schema graphql.Schema) *graphql.Result {
+	result := graphql.Do(graphql.Params{
+		Schema:        schema,
+		RequestString: query,
+	})
+	if len(result.Errors) > 0 {
+		fmt.Printf("wrong result, unexpected errors: %v", result.Errors)
+	}
+	return result
 }

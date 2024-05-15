@@ -1,0 +1,676 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    user(id: ID!): User!
+}
+
+type Mutation {
+    createUser(input: NewUser!): User!
+    updateUser(input: UpdateUser!): User!
+    updateNotification(input: UpdateNotification): User!
+}
+
+type User {
+    id: ID!
+    first: String!
+    last: String!
+    email: String!
+    notifications: [Notification!]!
+}
+
+type Notification {
+    id: ID!
+    seen: Boolean!
+    text: String!
+    title: String!
+}
+
+input NewUser {
+    email: String!
+}
+
+input UpdateUser {
+    id: ID!
+    first: String
+    last: String
+    email: String
+}
+
+input UpdateNotification {
+    id: ID!
+    userID: ID!
+    seen: Boolean!
+}
+
+type Subscription {
+    notificationAdded(id: ID!): User!
+}
+
+
+import { gql } from 'apollo-boost';
+
+const queryEveryPost = gql`
+  {
+    everyPost {
+      id
+      text
+      userID
+      canComment
+    }
+  }
+`
+
+const queryPostById = gql`
+  query($id: ID!) {
+    post(id: $id) {
+      id
+      text
+      userID
+      canComment
+    }
+  }
+`
+
+const queryEveryComment = gql`
+  {
+    everyComment {
+      id
+      text
+      userID
+      postID
+      commentID
+    }
+  }
+`
+
+const queryCommentById = gql`
+  query($id: ID!) {
+    comment(id: $id) {
+      id
+      text
+      userID
+      postID
+      commentID
+    }
+  }
+`
+
+const queryEveryUser = gql`
+  {
+    everyUser {
+      id
+    }
+  }
+`
+
+const queryUserById = gql`
+  query($id: ID!) {
+    user(id: $id) {
+      id
+    }
+  }
+`
+
+const queryEveryUsersubscription = gql`
+  {
+    everyUsersubscription {
+      userID
+      postID
+    }
+  }
+`
+
+export { queryEveryPost, queryPostById , queryEveryComment, queryCommentById , queryEveryUser, queryUserById , queryEveryUsersubscription};
+
+
+Client Mutations
+import { gql } from 'apollo-boost';
+
+const addPostMutation = gql`
+  mutation($text: String!, $userID: ID!, $canComment: Boolean!) {
+    addPost(text: $text, userID: $userID, canComment: $canComment) {
+      id
+      text
+      userID
+      canComment
+    }
+  }
+`
+
+const updatePostMutation = gql`
+  mutation($id: ID!, $text: String!, $userID: ID!, $canComment: Boolean!) {
+    updatePost(id: $id, text: $text, userID: $userID, canComment: $canComment) {
+      id
+      text
+      userID
+      canComment
+    }
+  }
+`
+
+const deletePostMutation = gql`
+  mutation($id: ID!){
+    deletePost(id: $id){
+      id
+      text
+      userID
+      canComment
+    }
+  }
+`
+
+const addCommentMutation = gql`
+  mutation($text: String!, $userID: ID!, $postID: ID!, $commentID: ID) {
+    addComment(text: $text, userID: $userID, postID: $postID, commentID: $commentID) {
+      id
+      text
+      userID
+      postID
+      commentID
+    }
+  }
+`
+
+const updateCommentMutation = gql`
+  mutation($id: ID!, $text: String!, $userID: ID!, $postID: ID!, $commentID: ID) {
+    updateComment(id: $id, text: $text, userID: $userID, postID: $postID, commentID: $commentID) {
+      id
+      text
+      userID
+      postID
+      commentID
+    }
+  }
+`
+
+const deleteCommentMutation = gql`
+  mutation($id: ID!){
+    deleteComment(id: $id){
+      id
+      text
+      userID
+      postID
+      commentID
+    }
+  }
+`
+
+const addUserMutation = gql`
+  mutation() {
+    addUser() {
+      id
+    }
+  }
+`
+
+const updateUserMutation = gql`
+  mutation($id: ID!) {
+    updateUser(id: $id) {
+      id
+    }
+  }
+`
+
+const deleteUserMutation = gql`
+  mutation($id: ID!){
+    deleteUser(id: $id){
+      id
+    }
+  }
+`
+
+const addUsersubscriptionMutation = gql`
+  mutation($userID: ID!, $postID: ID!) {
+    addUsersubscription(userID: $userID, postID: $postID) {
+      userID
+      postID
+    }
+  }
+`
+
+export {
+  addPostMutation,
+  updatePostMutation,
+  deletePostMutation,
+  addCommentMutation,
+  updateCommentMutation,
+  deleteCommentMutation,
+  addUserMutation,
+  updateUserMutation,
+  deleteUserMutation,
+  addUsersubscriptionMutation,
+};
+
+
+const graphql = require('graphql');
+const pool = require('../db/sql_pool.js');
+
+const { 
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLID,
+  GraphQLString, 
+  GraphQLInt, 
+  GraphQLBoolean,
+  GraphQLList,
+  GraphQLNonNull
+} = graphql;
+  
+const PostType = new GraphQLObjectType({
+  name: 'Post',
+  fields: () => ({
+    id: { type: GraphQLID },
+    text: { type: new GraphQLNonNull(GraphQLString) },
+    userID: { type: new GraphQLNonNull(GraphQLID) },
+    everyRelatedUser: {
+      type: UserType,
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "User" WHERE "id" = '${parent.userID}';`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    canComment: { type: new GraphQLNonNull(GraphQLBoolean) }
+  })
+});
+
+const CommentType = new GraphQLObjectType({
+  name: 'Comment',
+  fields: () => ({
+    id: { type: GraphQLID },
+    text: { type: new GraphQLNonNull(GraphQLString) },
+    userID: { type: new GraphQLNonNull(GraphQLID) },
+    everyRelatedUser: {
+      type: UserType,
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "User" WHERE "id" = '${parent.userID}';`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    postID: { type: new GraphQLNonNull(GraphQLID) },
+    everyRelatedPost: {
+      type: PostType,
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "Post" WHERE "id" = '${parent.postID}';`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    commentID: { type: GraphQLID },
+    everyRelatedComment: {
+      type: CommentType,
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "Comment" WHERE "id" = '${parent.commentID}';`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    }
+  })
+});
+
+const UserType = new GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
+    id: { type: GraphQLID }
+  })
+});
+
+const UsersubscriptionType = new GraphQLObjectType({
+  name: 'Usersubscription',
+  fields: () => ({
+    userID: { type: new GraphQLNonNull(GraphQLID) },
+    everyRelatedUser: {
+      type: UserType,
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "User" WHERE "id" = '${parent.userID}';`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    postID: { type: new GraphQLNonNull(GraphQLID) },
+    everyRelatedPost: {
+      type: PostType,
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "Post" WHERE "id" = '${parent.postID}';`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    }
+  })
+});
+
+const RootQuery = new GraphQLObjectType({
+  name: 'RootQueryType',
+  fields: {
+    everyPost: {
+      type: new GraphQLList(PostType),
+      resolve() {
+        const sql = `SELECT * FROM "Post";`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    post: {
+      type: PostType,
+      args: { id: { type: GraphQLID}},
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "Post" WHERE id = '${args.id}';`;
+        return pool.query(sql)
+          .then(res => res.rows[0])
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    everyComment: {
+      type: new GraphQLList(CommentType),
+      resolve() {
+        const sql = `SELECT * FROM "Comment";`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    comment: {
+      type: CommentType,
+      args: { id: { type: GraphQLID}},
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "Comment" WHERE id = '${args.id}';`;
+        return pool.query(sql)
+          .then(res => res.rows[0])
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    everyUser: {
+      type: new GraphQLList(UserType),
+      resolve() {
+        const sql = `SELECT * FROM "User";`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    user: {
+      type: UserType,
+      args: { id: { type: GraphQLID}},
+      resolve(parent, args) {
+        const sql = `SELECT * FROM "User" WHERE id = '${args.id}';`;
+        return pool.query(sql)
+          .then(res => res.rows[0])
+          .catch(err => console.log('Error: ', err))
+      }
+    },
+    everyUsersubscription: {
+      type: new GraphQLList(UsersubscriptionType),
+      resolve() {
+        const sql = `SELECT * FROM "Usersubscription";`
+        return pool.query(sql)
+          .then(res => res.rows)
+          .catch(err => console.log('Error: ', err))
+      }
+    }
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addPost: {
+      type: PostType,
+      args: {
+        id: { type: GraphQLID },
+        text: { type: new GraphQLNonNull(GraphQLString) },
+        userID: { type: new GraphQLNonNull(GraphQLID) },
+        canComment: { type: new GraphQLNonNull(GraphQLBoolean) }
+      },
+      resolve(parent, args) {
+        const columns = Object.keys(args).map(el => `"${el}"`);
+        const values = Object.values(args).map(el => `'${el}'`);
+        const sql = `INSERT INTO "Post" (${columns}) VALUES (${values}) RETURNING *`;
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    updatePost: {
+      type: PostType,
+      args: {
+        id: { type: GraphQLID },
+        text: { type: new GraphQLNonNull(GraphQLString) },
+        userID: { type: new GraphQLNonNull(GraphQLID) },
+        canComment: { type: new GraphQLNonNull(GraphQLBoolean) }
+      },
+      resolve(parent, args) {
+        let updateValues = '';
+        for (const prop in args) {
+          if (updateValues.length > 0) updateValues += `, `;
+          updateValues += `"${prop}" = '${args[prop]}' `;
+        }
+        const sql = `UPDATE "Post" SET ${updateValues} WHERE id = '${args.id}' RETURNING *;`
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    deletePost: {
+      type: PostType,
+      args: { id: { type: GraphQLID}},
+      resolve(parent, args) {
+        const sql = `DELETE FROM "Post" WHERE id = '${args.id}' RETURNING *;`
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    addComment: {
+      type: CommentType,
+      args: {
+        id: { type: GraphQLID },
+        text: { type: new GraphQLNonNull(GraphQLString) },
+        userID: { type: new GraphQLNonNull(GraphQLID) },
+        postID: { type: new GraphQLNonNull(GraphQLID) },
+        commentID: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const columns = Object.keys(args).map(el => `"${el}"`);
+        const values = Object.values(args).map(el => `'${el}'`);
+        const sql = `INSERT INTO "Comment" (${columns}) VALUES (${values}) RETURNING *`;
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    updateComment: {
+      type: CommentType,
+      args: {
+        id: { type: GraphQLID },
+        text: { type: new GraphQLNonNull(GraphQLString) },
+        userID: { type: new GraphQLNonNull(GraphQLID) },
+        postID: { type: new GraphQLNonNull(GraphQLID) },
+        commentID: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        let updateValues = '';
+        for (const prop in args) {
+          if (updateValues.length > 0) updateValues += `, `;
+          updateValues += `"${prop}" = '${args[prop]}' `;
+        }
+        const sql = `UPDATE "Comment" SET ${updateValues} WHERE id = '${args.id}' RETURNING *;`
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    deleteComment: {
+      type: CommentType,
+      args: { id: { type: GraphQLID}},
+      resolve(parent, args) {
+        const sql = `DELETE FROM "Comment" WHERE id = '${args.id}' RETURNING *;`
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    addUser: {
+      type: UserType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const columns = Object.keys(args).map(el => `"${el}"`);
+        const values = Object.values(args).map(el => `'${el}'`);
+        const sql = `INSERT INTO "User" (${columns}) VALUES (${values}) RETURNING *`;
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    updateUser: {
+      type: UserType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        let updateValues = '';
+        for (const prop in args) {
+          if (updateValues.length > 0) updateValues += `, `;
+          updateValues += `"${prop}" = '${args[prop]}' `;
+        }
+        const sql = `UPDATE "User" SET ${updateValues} WHERE id = '${args.id}' RETURNING *;`
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    deleteUser: {
+      type: UserType,
+      args: { id: { type: GraphQLID}},
+      resolve(parent, args) {
+        const sql = `DELETE FROM "User" WHERE id = '${args.id}' RETURNING *;`
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    },
+    addUsersubscription: {
+      type: UsersubscriptionType,
+      args: {
+        userID: { type: new GraphQLNonNull(GraphQLID) },
+        postID: { type: new GraphQLNonNull(GraphQLID) }
+      },
+      resolve(parent, args) {
+        const columns = Object.keys(args).map(el => `"${el}"`);
+        const values = Object.values(args).map(el => `'${el}'`);
+        const sql = `INSERT INTO "Usersubscription" (${columns}) VALUES (${values}) RETURNING *`;
+        return pool.connect()
+          .then(client => {
+            return client.query(sql)
+              .then(res => {
+                client.release();
+                return res.rows[0];
+              })
+              .catch(err => {
+                client.release();
+                console.log('Error: ', err);
+              })
+          })
+      }
+    }
+  }
+});
+
+module.exports = new GraphQLSchema({
+  query: RootQuery,
+  mutation: Mutation
+});
+

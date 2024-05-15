@@ -15,6 +15,13 @@ type Comment struct {
 	PerentID int    `json:"peid"`
 }
 
+type UserSubscription struct {
+	ID           int  `json:"id"`
+	UserID       int  `json:"uid"`
+	PostID       int  `json:"pid"`
+	Сonfirmation bool `json:"confirmation"`
+}
+
 /*
 // Blog Interface
 type Blog interface {

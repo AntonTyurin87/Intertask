@@ -16,6 +16,8 @@ type Blog interface {
 	CreateNewPost(newPost *blogInterface.Post) (*blogInterface.Post, error)
 	CreateNewComment(newComment *blogInterface.Comment) (*blogInterface.Comment, error)
 	CorrectPost(correctPost *blogInterface.Post) (*blogInterface.Post, error)
+	CreateUserSubscription(newSubscription *blogInterface.UserSubscription) (*blogInterface.UserSubscription, error)
+	CreateNotification(comment int) ([]blogInterface.UserSubscription, error)
 }
 
 // func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
