@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,6 +15,17 @@ import (
 	//handler "intertask/handler"
 	// postgresdb "intertask/postgresdb"
 )
+
+func executeQuery(query string, schema graphql.Schema) *graphql.Result {
+	result := graphql.Do(graphql.Params{
+		Schema:        schema,
+		RequestString: query,
+	})
+	if len(result.Errors) > 0 {
+		fmt.Printf("wrong result, unexpected errors: %v", result.Errors)
+	}
+	return result
+}
 
 func main() {
 
@@ -34,12 +46,11 @@ func main() {
 		Schema: &schema,
 	})
 
-	/*
-		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-			result := executeQuery(r.URL.Query().Get("query"), schema)
-			json.NewEncoder(w).Encode(result)
-		})
-	*/
+	http.HandleFunc("/subscription", func(w http.ResponseWriter, r *http.Request) {
+		result := executeQuery(r.URL.Query().Get("query"), schema)
+		json.NewEncoder(w).Encode(result)
+	})
+
 	http.Handle("/graphql", handler3)
 	log.Println("Server started at http://localhost:8080/graphql")
 
@@ -88,13 +99,3 @@ func Handler(storage graphqlsh.Blog) *gqlhandler.Handler {
 	return handler
 }
 */
-func executeQuery(query string, schema graphql.Schema) *graphql.Result {
-	result := graphql.Do(graphql.Params{
-		Schema:        schema,
-		RequestString: query,
-	})
-	if len(result.Errors) > 0 {
-		fmt.Printf("wrong result, unexpected errors: %v", result.Errors)
-	}
-	return result
-}
