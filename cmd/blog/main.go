@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"intertask/graphqlsh"
-	"intertask/inmemory"
+	"intertask/postgresdb"
 
 	"github.com/graphql-go/graphql"
 	gqlhandler "github.com/graphql-go/graphql-go-handler"
@@ -29,12 +29,12 @@ func executeQuery(query string, schema graphql.Schema) *graphql.Result {
 
 func main() {
 
-	//db, _ := postgresdb.InitDB()
+	db, _ := postgresdb.InitDB()
 
-	var InMe []inmemory.InMemoryType
+	//var InMe []inmemory.InMemoryType
 
-	//storage := postgresdb.NewStorage(db)
-	storage := inmemory.NewInMemory(InMe)
+	storage := postgresdb.NewStorage(db)
+	//storage := inmemory.NewInMemory(InMe)
 
 	schema, _ := graphql.NewSchema(
 		graphql.SchemaConfig{

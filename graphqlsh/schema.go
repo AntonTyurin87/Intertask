@@ -43,6 +43,14 @@ var PostType = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"comments": &graphql.Field{
 			Type: CommentType,
+			Args: graphql.FieldConfigArgument{
+				"limit": &graphql.ArgumentConfig{
+					Type: graphql.Int,
+				},
+				"offset": &graphql.ArgumentConfig{
+					Type: graphql.Int,
+				},
+			},
 		},
 	},
 },
@@ -64,7 +72,7 @@ var CommentType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.NewNonNull(graphql.Int),
 		},
 		"text": &graphql.Field{
-			Type: graphql.String,
+			Type: graphql.NewNonNull(graphql.String),
 		},
 	},
 })

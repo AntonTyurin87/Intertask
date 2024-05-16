@@ -57,13 +57,12 @@ func QueryType(storage Blog) *graphql.Object {
 						if offset < 0 {
 							offset = 0
 						}
+
 						return storage.FetchAllPosts(limit, offset)
 					},
 				},
 				"post": &graphql.Field{
 					Type: CreatePostType(storage),
-					//Type: PostType,
-					//Type: CreatePostType(storage),
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.Int),
@@ -72,8 +71,6 @@ func QueryType(storage Blog) *graphql.Object {
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 						id := p.Args["id"]
 						v, _ := id.(int)
-						// Read limit
-						//log.Printf("fetching post with id: %d", v)
 
 						return storage.FetchPostByiD(v)
 					},

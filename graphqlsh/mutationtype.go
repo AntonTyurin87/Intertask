@@ -9,16 +9,11 @@ import (
 // Нужно сперва вернуть UserID
 
 func MutationType(storage Blog) *graphql.Object {
-	//func MutationType(storage postgresdb.Storage) *graphql.Object {
-
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name: "BlogMutation",
 		Fields: graphql.Fields{
 			"createpost": &graphql.Field{
 				Type: PostType,
-				//Type: CreatePostType(storage),
-				//Type: graphql.NewList(CreatePostType(storage)),
-				//Description: "Create new Post",
 				Args: graphql.FieldConfigArgument{
 					"userid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
@@ -74,6 +69,7 @@ func MutationType(storage Blog) *graphql.Object {
 			"createcomment": &graphql.Field{
 				Type: CommentType,
 				Args: graphql.FieldConfigArgument{
+
 					"postid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
@@ -87,6 +83,7 @@ func MutationType(storage Blog) *graphql.Object {
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
+
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
 					text, _ := params.Args["text"].(string)

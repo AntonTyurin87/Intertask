@@ -6,7 +6,7 @@ import (
 
 func CreatePostType(storage Blog) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
-		Name: "Post2",
+		Name: "Post",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.Int,
@@ -30,6 +30,7 @@ func CreatePostType(storage Blog) *graphql.Object {
 						Type: graphql.Int,
 					},
 				},
+
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					post, _ := p.Source.(*Post)
 					// Read limit
