@@ -145,12 +145,8 @@ func (s *Storage) CreateNewComment(newComment *graphqlsh.Comment) (*graphqlsh.Co
 	// Requests the status of the post for the possibility of commenting.
 	err = s.DB.QueryRow(qeryToDB).Scan(&comentstatus)
 
-	if err != nil {
-		return nil, err
-	}
-
 	// If comments cannot be made, then an empty value is returned.
-	if comentstatus == "false" {
+	if err != nil || comentstatus == "false" {
 		return nil, err
 	}
 
@@ -303,13 +299,9 @@ func (s *Storage) FetchCommentsByPostID(id, limit, offset int) ([]graphqlsh.Comm
 	// Requests the status of the post for the possibility of commenting.
 	err = s.DB.QueryRow(qeryToDB).Scan(&comentstatus)
 
-	if err != nil {
-		return result, err
-	}
-
 	// If comments cannot be made, then an empty value is returned.
-	if comentstatus == "false" {
-		return result, err
+	if err != nil || comentstatus == "false" {
+		return nil, err
 	}
 
 	qeryToDB = fmt.Sprintf(`
