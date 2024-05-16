@@ -2,7 +2,6 @@ package graphqlsh
 
 import (
 	"fmt"
-	blogInterface "intertask/cmd/bloginterface"
 
 	"github.com/graphql-go/graphql"
 )
@@ -21,7 +20,7 @@ func MutationType(storage Blog) *graphql.Object {
 				//Type: graphql.NewList(CreatePostType(storage)),
 				//Description: "Create new Post",
 				Args: graphql.FieldConfigArgument{
-					"postauthorid": &graphql.ArgumentConfig{
+					"userid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 					"text": &graphql.ArgumentConfig{
@@ -33,14 +32,14 @@ func MutationType(storage Blog) *graphql.Object {
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
-					postauthorid, _ := params.Args["postauthorid"].(int)
+					userid, _ := params.Args["userid"].(int)
 					text, _ := params.Args["text"].(string)
 					cancomment, _ := params.Args["cancomment"].(bool)
 
-					newPost := blogInterface.Post{
-						PostAuthorID: postauthorid,
-						Text:         text,
-						CanComment:   cancomment,
+					newPost := Post{
+						UserID:     userid,
+						Text:       text,
+						CanComment: cancomment,
 					}
 					return storage.CreateNewPost(&newPost)
 				},
@@ -51,7 +50,7 @@ func MutationType(storage Blog) *graphql.Object {
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
-					"postauthorid": &graphql.ArgumentConfig{
+					"userid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 					"cancomment": &graphql.ArgumentConfig{
@@ -61,27 +60,27 @@ func MutationType(storage Blog) *graphql.Object {
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
 					id, _ := params.Args["id"].(int)
-					postauthorid, _ := params.Args["postauthorid"].(int)
+					userid, _ := params.Args["userid"].(int)
 					cancomment, _ := params.Args["cancomment"].(bool)
 
-					correctPost := blogInterface.Post{
-						PID:          id,
-						PostAuthorID: postauthorid,
-						CanComment:   cancomment,
+					correctPost := Post{
+						ID:         id,
+						UserID:     userid,
+						CanComment: cancomment,
 					}
-					return storage.CorrectPost(&correctPost)
+					return storage.UpdatePost(&correctPost)
 				},
 			},
 			"createcomment": &graphql.Field{
 				Type: CommentType,
 				Args: graphql.FieldConfigArgument{
-					"pid": &graphql.ArgumentConfig{
+					"postid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
-					"uid": &graphql.ArgumentConfig{
+					"userid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
-					"peid": &graphql.ArgumentConfig{
+					"perentid": &graphql.ArgumentConfig{
 						Type: graphql.Int,
 					},
 					"text": &graphql.ArgumentConfig{
@@ -91,30 +90,31 @@ func MutationType(storage Blog) *graphql.Object {
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
 					text, _ := params.Args["text"].(string)
-					uid := params.Args["uid"].(int)
-					pid, _ := params.Args["pid"].(int)
-					peid, err := params.Args["peid"].(int)
+					userid := params.Args["userid"].(int)
+					postid, _ := params.Args["postid"].(int)
+					perentid, err := params.Args["perentid"].(int)
+
 					if !err {
 						fmt.Println("1")
-						peid = 0
+						perentid = 0
 					}
 
-					newComment := blogInterface.Comment{
-						UserID:   uid,
-						PostID:   pid,
-						PerentID: peid,
+					newComment := Comment{
+						UserID:   userid,
+						PostID:   postid,
+						PerentID: perentid,
 						Text:     text,
 					}
 					return storage.CreateNewComment(&newComment)
 				},
 			},
 			"dosubscription": &graphql.Field{
-				Type: UserSubscription,
+				Type: UserSubscriptionType,
 				Args: graphql.FieldConfigArgument{
-					"uid": &graphql.ArgumentConfig{
+					"userid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
-					"pid": &graphql.ArgumentConfig{
+					"postid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 					"confirmation": &graphql.ArgumentConfig{
@@ -124,12 +124,12 @@ func MutationType(storage Blog) *graphql.Object {
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
 					confirmation, _ := params.Args["confirmation"].(bool)
-					uid, _ := params.Args["uid"].(int)
-					pid, _ := params.Args["pid"].(int)
+					userid, _ := params.Args["userid"].(int)
+					postid, _ := params.Args["postid"].(int)
 
-					newSubscription := blogInterface.UserSubscription{
-						UserID:       uid,
-						PostID:       pid,
+					newSubscription := UserSubscription{
+						UserID:       userid,
+						PostID:       postid,
 						Сonfirmation: confirmation,
 					}
 					return storage.CreateUserSubscription(&newSubscription)

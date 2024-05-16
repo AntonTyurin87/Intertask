@@ -1,8 +1,6 @@
 package graphqlsh
 
 import (
-	blogInterface "intertask/cmd/bloginterface"
-
 	"github.com/graphql-go/graphql"
 )
 
@@ -18,7 +16,7 @@ func SubscriptionType(storage Blog) *graphql.Object {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					comment, _ := p.Source.(blogInterface.Comment)
+					comment, _ := p.Source.(Comment)
 
 					//Вот тут надо сделать асинхронную рассылку уведомлений!!!
 

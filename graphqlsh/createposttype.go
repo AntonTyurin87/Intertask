@@ -1,8 +1,6 @@
 package graphqlsh
 
 import (
-	blogInterface "intertask/cmd/bloginterface"
-
 	"github.com/graphql-go/graphql"
 )
 
@@ -16,7 +14,7 @@ func CreatePostType(storage Blog) *graphql.Object {
 			"text": &graphql.Field{
 				Type: graphql.String,
 			},
-			"postauthorid": &graphql.Field{
+			"userid": &graphql.Field{
 				Type: graphql.Int,
 			},
 			"cancomment": &graphql.Field{
@@ -33,7 +31,7 @@ func CreatePostType(storage Blog) *graphql.Object {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					post, _ := p.Source.(*blogInterface.Post)
+					post, _ := p.Source.(*Post)
 					// Read limit
 					limit, _ := p.Args["limit"].(int)
 					if limit <= 0 || limit > 20 {
@@ -45,7 +43,7 @@ func CreatePostType(storage Blog) *graphql.Object {
 						offset = 0
 					}
 
-					return storage.FetchCommentsByPostID(post.PID, limit, offset)
+					return storage.FetchCommentsByPostID(post.ID, limit, offset)
 
 				},
 			},

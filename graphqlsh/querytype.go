@@ -4,23 +4,33 @@ import (
 	//"intertask/graphqlsh"
 
 	"github.com/graphql-go/graphql"
-
-	blogInterface "intertask/cmd/bloginterface"
 )
 
-// Blog Interface
+// Blog Interface for workштп with the data storage.
 type Blog interface {
-	FetchAllPosts(limit, offset int) ([]blogInterface.Post, error)
-	FetchPostByiD(id int) (*blogInterface.Post, error)
-	FetchCommentsByPostID(id, limit, offset int) ([]blogInterface.Comment, error)
-	CreateNewPost(newPost *blogInterface.Post) (*blogInterface.Post, error)
-	CreateNewComment(newComment *blogInterface.Comment) (*blogInterface.Comment, error)
-	CorrectPost(correctPost *blogInterface.Post) (*blogInterface.Post, error)
-	CreateUserSubscription(newSubscription *blogInterface.UserSubscription) (*blogInterface.UserSubscription, error)
-	CreateNotification(comment int) ([]blogInterface.UserSubscription, error)
+	//Gets all posts from data storage.
+	FetchAllPosts(limit, offset int) ([]Post, error)
+
+	// Get a post and comments to it by ID from data storage.
+	FetchPostByiD(id int) (*Post, error)
+
+	//Get comments for a specific post from data storage.
+	FetchCommentsByPostID(id, limit, offset int) ([]Comment, error)
+
+	//Creates a record of a new post in data storage.
+	CreateNewPost(newPost *Post) (*Post, error)
+
+	// Creates a record of a new comment in data storage.
+	CreateNewComment(newComment *Comment) (*Comment, error)
+
+	// Makes a change to the post entry about the ability to comment the post in data storage.
+	UpdatePost(correctPost *Post) (*Post, error)
+
+	CreateUserSubscription(newSubscription *UserSubscription) (*UserSubscription, error)
+
+	CreateNotification(comment int) ([]UserSubscription, error)
 }
 
-// func QueryType(postType *graphql.Object, storage postgresdb.Storage) *graphql.Object {
 func QueryType(storage Blog) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
