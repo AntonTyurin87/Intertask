@@ -1,21 +1,51 @@
 package graphqlsh
 
 import (
-	"fmt"
+	"slices"
+	"sync"
 
 	"github.com/graphql-go/graphql"
 )
 
-// Нужно сперва вернуть UserID
+var (
+	mx                   sync.Mutex
+	commentSubscriptions = map[int][]chan any{}
+)
+
+func SubscribeToNewComments(postID int, ch chan any) {
+	mx.Lock()
+
+	commentSubscriptions[postID] = append(commentSubscriptions[postID], ch)
+
+	mx.Unlock()
+}
+
+func UnsubscribeFromNewComments(postID int, ch chan any) {
+	mx.Lock()
+
+	idx := slices.Index(commentSubscriptions[postID], ch)
+	commentSubscriptions[postID] = slices.Delete(commentSubscriptions[postID], idx, idx+1)
+
+	mx.Unlock()
+}
+
+func NewComment(postID int, newComment any) {
+	mx.Lock()
+
+	for _, subscription := range commentSubscriptions[postID] {
+		subscription <- newComment
+	}
+
+	mx.Unlock()
+}
 
 func MutationType(storage Blog) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name: "BlogMutation",
 		Fields: graphql.Fields{
-			"createpost":     createPost(storage),
-			"commentstatus":  commentStatus(storage),
-			"createcomment":  createComment(storage),
-			"dosubscription": doSubscription(storage),
+			"createpost":    createPost(storage),
+			"commentstatus": commentStatus(storage),
+			"createcomment": createComment(storage),
 		},
 	})
 }
@@ -107,7 +137,6 @@ func createComment(storage Blog) *graphql.Field {
 			perentid, err := params.Args["perentid"].(int)
 
 			if !err {
-				fmt.Println("1")
 				perentid = 0
 			}
 
@@ -118,36 +147,6 @@ func createComment(storage Blog) *graphql.Field {
 				Text:     text,
 			}
 			return storage.CreateNewComment(&newComment)
-		},
-	}
-}
-
-func doSubscription(storage Blog) *graphql.Field {
-	return &graphql.Field{
-		Type: UserSubscriptionType,
-		Args: graphql.FieldConfigArgument{
-			"userid": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
-			"postid": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
-			"confirmation": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.Boolean),
-			},
-		},
-		Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-
-			confirmation, _ := params.Args["confirmation"].(bool)
-			userid, _ := params.Args["userid"].(int)
-			postid, _ := params.Args["postid"].(int)
-
-			newSubscription := UserSubscription{
-				UserID:       userid,
-				PostID:       postid,
-				Сonfirmation: confirmation,
-			}
-			return storage.CreateUserSubscription(&newSubscription)
 		},
 	}
 }

@@ -25,10 +25,6 @@ type Blog interface {
 
 	// Makes a change to the post entry about the ability to comment the post in data storage.
 	UpdatePost(correctPost *Post) (*Post, error)
-
-	CreateUserSubscription(newSubscription *UserSubscription) (*UserSubscription, error)
-
-	CreateNotification(comment int) ([]UserSubscription, error)
 }
 
 func QueryType(storage Blog) *graphql.Object {

@@ -11,16 +11,30 @@ func SubscriptionType(storage Blog) *graphql.Object {
 			"createcomment": &graphql.Field{
 				Type: CommentType,
 				Args: graphql.FieldConfigArgument{
-					"pid": &graphql.ArgumentConfig{
+					"postid": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					comment, _ := p.Source.(Comment)
+					return p.Source, nil
+				},
+				Subscribe: func(params graphql.ResolveParams) (interface{}, error) {
+					ch := make(chan any)
+					postid, _ := params.Args["postid"].(int)
 
-					//Вот тут надо сделать асинхронную рассылку уведомлений!!!
+					SubscribeToNewComments(postid, ch)
+					go func() {
+						for {
+							select {
+							case <-params.Context.Done():
+								UnsubscribeFromNewComments(postid, ch)
+								close(ch)
+								return
+							}
+						}
+					}()
 
-					return storage.CreateNotification(comment.PostID)
+					return ch, nil
 				},
 			},
 		},
