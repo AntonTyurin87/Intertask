@@ -32,7 +32,6 @@ func NewInMemory(InMe []InMemoryType) *InMemoryStorage {
 // Makes a change to the post entry about the ability to comment the post in memory.
 func (i *InMemoryStorage) UpdatePost(correctPost *graphqlsh.Post) (*graphqlsh.Post, error) {
 
-	var err error
 	var result graphqlsh.Post
 
 	for j, value := range i.InMemory {
@@ -53,31 +52,31 @@ func (i *InMemoryStorage) UpdatePost(correctPost *graphqlsh.Post) (*graphqlsh.Po
 					CanComment: correctPost.CanComment,
 				}
 
+				// Removes an outdated record from a record slice and replaces it with a new one.
 				i.InMemory = append(i.InMemory[:j], i.InMemory[j+1:]...)
 				i.InMemory = append(i.InMemory, postData)
 			}
 
-			return &result, err
+			return &result, nil
 		}
 	}
-	return &result, err // If a post to update on is not found, then return an empty value.
+	return &result, nil // If a post to update on is not found, then return an empty value.
 }
 
 // Creates a record of a new comment to post in memory.
 func (i *InMemoryStorage) CreateNewComment(newComment *graphqlsh.Comment) (*graphqlsh.Comment, error) {
 
-	var err error
 	var result graphqlsh.Comment
 
-	//
 	for _, value := range i.InMemory {
 		if value.ID == newComment.PostID {
 			if !value.CanComment {
-				return &result, err
+				return &result, nil
 			} else {
 
 				var trimText string
-
+				// If the comment is longer than 2000 characters,
+				// then only the first 2000 characters are left and the rest is discarded.
 				if len(newComment.Text) > 2000 {
 					trimText = newComment.Text[0:2000]
 				} else {
@@ -104,17 +103,16 @@ func (i *InMemoryStorage) CreateNewComment(newComment *graphqlsh.Comment) (*grap
 
 				RecordCounter++
 
-				return &result, err
+				return &result, nil
 			}
 		}
 	}
-	return &result, err // If a post to comment on is not found, then return an empty value.
+	return &result, nil // If a post to comment on is not found, then return an empty value.
 }
 
 // Creates a record of a new post in memory.
 func (i *InMemoryStorage) CreateNewPost(newPost *graphqlsh.Post) (*graphqlsh.Post, error) {
 
-	var err error
 	var result graphqlsh.Post
 
 	postData := InMemoryType{
@@ -124,6 +122,7 @@ func (i *InMemoryStorage) CreateNewPost(newPost *graphqlsh.Post) (*graphqlsh.Pos
 		CanComment: newPost.CanComment,
 	}
 
+	// Adds a new record to the data slice.
 	i.InMemory = append(i.InMemory, postData)
 
 	result = graphqlsh.Post{
@@ -135,13 +134,12 @@ func (i *InMemoryStorage) CreateNewPost(newPost *graphqlsh.Post) (*graphqlsh.Pos
 
 	RecordCounter++
 
-	return &result, err
+	return &result, nil
 }
 
 // Gets all posts from memory.
 func (i *InMemoryStorage) FetchAllPosts(limit int, offset int) ([]graphqlsh.Post, error) {
 
-	var err error
 	var result []graphqlsh.Post
 	var toResult graphqlsh.Post
 
@@ -157,16 +155,17 @@ func (i *InMemoryStorage) FetchAllPosts(limit int, offset int) ([]graphqlsh.Post
 		}
 	}
 
+	// Sorts the post slice in ascending order.
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].ID < result[j].ID
 	})
 
-	return result, err
+	return result, nil
 }
 
 // Get a post and comments to it by ID from memory.
 func (i *InMemoryStorage) FetchPostByiD(id int) (*graphqlsh.Post, error) {
-	var err error
+
 	var result graphqlsh.Post
 
 	for _, value := range i.InMemory {
@@ -180,7 +179,7 @@ func (i *InMemoryStorage) FetchPostByiD(id int) (*graphqlsh.Post, error) {
 		}
 	}
 
-	return &result, err
+	return &result, nil
 }
 
 // Get comments for a specific post from memory.
@@ -210,19 +209,21 @@ func (i *InMemoryStorage) FetchCommentsByPostID(id, limit, offset int) ([]graphq
 		}
 	}
 
+	// Sorts the post slice in ascending order.
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].PerentID < result[j].PerentID && result[i].ID < result[j].ID
 	})
 
+	// Works with the length of the output slice.
 	if len(result) < offset-1 {
 		var empty []graphqlsh.Comment
-		err = fmt.Errorf("There are not so many comments.", err)
+		fmt.Sprint("There are not so many comments.")
 		return empty, err
 	}
 
 	if len(result) < offset+limit {
-		return result[offset:], err
+		return result[offset:], nil
 	}
 
-	return result[offset : offset+limit], err
+	return result[offset : offset+limit], nil
 }

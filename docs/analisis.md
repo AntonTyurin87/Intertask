@@ -73,3 +73,28 @@
 - [ ] Docker
 - [ ] GraphQL
 - [ ] Make
+
+## Tребований к Docker образу.
+- [ ] Содержит Ubuntu, PostgresQL и исполняемый файл
+- [ ] При запуске выбираются/задаются параметры:
+  - [ ] Работа из БД или inmemory.
+  - [ ] Хост
+  - [ ] Порт
+  - [ ] user
+  - [ ] password
+  - [ ] Имя БД
+  - [ ] Из какого файла разворачивать БД
+  - [ ] sslmode - ?
+
+  ## Tребований к скрипту для запуска приложения.
+- [ ] ServerHost
+- [ ] ServerPort
+- [ ] PostgresHost
+- [ ] PostgresPort
+- [ ] PostgresUser
+- [ ] PostgresPasword
+- [ ] PostgresBase
+- [ ] PostgresStorage (On/Off)
+- [ ] PostgresStorageEmpty (On/Off)
+
+  
