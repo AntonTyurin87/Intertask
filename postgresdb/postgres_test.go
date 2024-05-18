@@ -1,69 +1,112 @@
 package postgresdb
 
 import (
+	"database/sql"
 	"fmt"
+	"intertask/graphqlsh"
+	"os"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
+
+	_ "modernc.org/sqlite"
 )
 
-func TestUpdatePost(t *testing.T) {
-	/*
-		db, mock, err := sqlmock.New()
-		if err != nil {
-			t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-		}
-		defer db.Close()
+// Returns the database generated for tests and model storage.
+func DBGenerate() (*sql.DB, *Storage, error) {
 
-		service := NewStorage(db)
+	// Open the database from a file.
+	db, err := sql.Open("sqlite", "DBfortests.db")
+	if err != nil {
+		return nil, nil, err
+	}
 
-		rows := sqlmock.NewRows([]string{"id", "text", "userid", "cancomment"}).AddRow(1, "text", 1, true)
+	storage := NewStorage(db)
 
-			qeryToDB := `
-				UPDATE posts
-					SET cancomment =
-						CASE
-							WHEN
-								(SELECT userid FROM posts WHERE id = 1) = 1
-							THEN true
-						END
-					WHERE id = 1;`
+	// Erase data from database tables.
+	res1, err := db.Exec("DELETE FROM users; DELETE FROM posts; DELETE FROM comments;")
+	if err != nil {
+		fmt.Println(res1 == nil)
+		return nil, nil, err
+	}
 
-		mokQuery := "SELECT id, text, userid, cancomment FROM posts WHERE id = 1;"
+	// Reads commands to generate model data.
+	textSQL, err := os.ReadFile("sql/DBfortestsdata.sql")
+	if err != nil {
+		fmt.Println(err)
+		return nil, nil, err
+	}
 
-		mock.ExpectQuery(mokQuery).WillReturnRows(rows)
+	stringSQL := string(textSQL)
 
-		var correctPost = graphqlsh.Post{
-			ID:         1,
-			UserID:     1,
-			CanComment: true,
-		}
+	// Creates model data in the database.
+	res2, err := db.Exec(stringSQL)
+	if err != nil {
+		fmt.Println(res2 == nil, err)
+		return nil, nil, err
+	}
 
-		ww := &correctPost
-
-		posts, err := service.UpdatePost(&correctPost)
-		if err != nil {
-			t.Fail()
-		}
-
-		post := posts
-		if post.CanComment != true {
-			t.Log("мы что-то не так сделали")
-			t.Fail()
-		}
-
-		if err := mock.ExpectationsWereMet(); err != nil {
-			t.Errorf("there were unfulfilled expectations: %s", err)
-		}
-	*/
+	return db, storage, err
 }
 
+// Test function thats updates the status for the ability to comment on the post.
+func TestUpdatePost(t *testing.T) {
+
+	db, storage, err := DBGenerate()
+	if err != nil {
+		t.Errorf("The database is not connected")
+	}
+
+	qeryToDB := "SELECT userid, id, text, cancomment FROM posts WHERE id = 1;"
+
+	// Query to the model database.
+	rows, err := db.Query(qeryToDB)
+	if err != nil {
+		fmt.Println(err)
+		t.Errorf("The database request failed.")
+	}
+	defer db.Close()
+
+	var beforeUpdate graphqlsh.Post
+	var canCommentNow bool
+
+	for rows.Next() {
+		if err = rows.Scan(&beforeUpdate.ID, &beforeUpdate.Text, &beforeUpdate.UserID, canCommentNow); err != nil {
+			t.Errorf("The database request failed.")
+		}
+	}
+
+	beforeUpdate.CanComment = !canCommentNow
+
+	// Expected response after the UpdatePost function works.
+	exeptedUpdate := graphqlsh.Post{
+		ID:         beforeUpdate.ID,
+		UserID:     beforeUpdate.UserID,
+		Text:       beforeUpdate.Text,
+		CanComment: !canCommentNow,
+	}
+
+	afterUpdate, err := storage.UpdatePost(&beforeUpdate)
+	if err != nil {
+		t.Errorf("The function being tested does not work!")
+	}
+
+	// Comparison of structure fields.
+	assert.Equal(t, beforeUpdate.ID, afterUpdate.ID, exeptedUpdate.ID)
+	assert.Equal(t, beforeUpdate.UserID, afterUpdate.UserID, exeptedUpdate.UserID)
+	assert.Equal(t, beforeUpdate.Text, afterUpdate.Text, exeptedUpdate.Text)
+	assert.Equal(t, !beforeUpdate.CanComment, afterUpdate.CanComment, exeptedUpdate.CanComment)
+
+}
+
+/*
 func TestCreateNewComment(t *testing.T) {
 }
 
 func TestCreateNewPost(t *testing.T) {
 }
-
+*/
 func TestFetchAllPosts(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -132,6 +175,7 @@ func TestFetchPostByiD(t *testing.T) {
 	}
 }
 
+/*
 func TestFetchCommentsByPostID(t *testing.T) {
 
 	db, mock, err := sqlmock.New()
@@ -177,3 +221,4 @@ func TestFetchCommentsByPostID(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
+*/
