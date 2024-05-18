@@ -4,9 +4,11 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// The function that creates a type for sending subscription information to the go channel.
 func SubscriptionType(storage Blog) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
-		Name: "Subscription",
+		Name:        "Subscription",
+		Description: "Type for sending subscription information to the go channel.",
 		Fields: graphql.Fields{
 			"createcomment": &graphql.Field{
 				Type: CommentType,
@@ -18,6 +20,7 @@ func SubscriptionType(storage Blog) *graphql.Object {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return p.Source, nil
 				},
+				// Subscribe and create a separate go channel for it.
 				Subscribe: func(params graphql.ResolveParams) (interface{}, error) {
 					ch := make(chan any)
 					postid, _ := params.Args["postid"].(int)
@@ -33,7 +36,7 @@ func SubscriptionType(storage Blog) *graphql.Object {
 							}
 						}
 					}()
-
+					// Returns the go channel.
 					return ch, nil
 				},
 			},

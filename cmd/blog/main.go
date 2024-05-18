@@ -14,6 +14,8 @@ import (
 
 func main() {
 
+	//var err error
+
 	//db, _ := postgresdb.InitDB()
 
 	var InMe []inmemory.InMemoryType

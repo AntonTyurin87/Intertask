@@ -11,3 +11,16 @@ services:
     volumes:
       - ./postgresdb/sql/PostsComments.sql:/docker-entrypoint-initdb.d/PostsComments.sql
     image: postgres:16.2-alpine3.19
+
+  intertask:
+    container_name: intertask
+    ports:
+      - "8080:8080"
+    environment:
+      - POSTGRES_URL=postgres://admin:12345@postgres:5432/db_post_comment?sslmode=disable
+      - IN_MEMORY=false
+    build:
+      context: .
+
+networks:
+  default:

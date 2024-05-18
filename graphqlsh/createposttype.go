@@ -4,9 +4,11 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// The function that creates a type for a post with additional parameters and calls another function to access the database to create a new post.
 func CreatePostType(storage Blog) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
-		Name: "Post",
+		Name:        "Post",
+		Description: "Create Post Ttpe and calls a function to search for comments on a post.",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.Int,

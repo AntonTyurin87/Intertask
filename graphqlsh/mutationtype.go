@@ -39,9 +39,11 @@ func NewComment(postID int, newComment any) {
 	mx.Unlock()
 }
 
+// The function that creates a type for sending mutations to the database
 func MutationType(storage Blog) *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
-		Name: "BlogMutation",
+		Name:        "BlogMutation",
+		Description: "A type for making changes to the database of posts and comments and to the posts themselves.",
 		Fields: graphql.Fields{
 			"createpost":    createPost(storage),
 			"commentstatus": commentStatus(storage),
@@ -50,9 +52,11 @@ func MutationType(storage Blog) *graphql.Object {
 	})
 }
 
+// The function that creates a type for sending requests to the database to create a post.
 func createPost(storage Blog) *graphql.Field {
 	return &graphql.Field{
-		Type: PostType,
+		Type:        PostType,
+		Description: "Type for creating a new post based on the base type.",
 		Args: graphql.FieldConfigArgument{
 			"userid": &graphql.ArgumentConfig{
 				Type: graphql.NewNonNull(graphql.Int),
@@ -80,9 +84,11 @@ func createPost(storage Blog) *graphql.Field {
 	}
 }
 
+// The function that creates a type for sending requests to the database to change the comment status of a post.
 func commentStatus(storage Blog) *graphql.Field {
 	return &graphql.Field{
-		Type: PostType,
+		Type:        PostType,
+		Description: "Type for making changes to an existing post, based on the base type.",
 		Args: graphql.FieldConfigArgument{
 			"id": &graphql.ArgumentConfig{
 				Type: graphql.NewNonNull(graphql.Int),
@@ -110,9 +116,11 @@ func commentStatus(storage Blog) *graphql.Field {
 	}
 }
 
+// The function that creates a type for sending requests to the database to create a comment on a post.
 func createComment(storage Blog) *graphql.Field {
 	return &graphql.Field{
-		Type: CommentType,
+		Type:        CommentType,
+		Description: "Type for creating a new comment based on the base type.",
 		Args: graphql.FieldConfigArgument{
 
 			"postid": &graphql.ArgumentConfig{
@@ -146,6 +154,9 @@ func createComment(storage Blog) *graphql.Field {
 				PerentID: perentid,
 				Text:     text,
 			}
+
+			// Intercept information about a new comment and send it to work for subscription.
+			NewComment(postid, newComment)
 			return storage.CreateNewComment(&newComment)
 		},
 	}

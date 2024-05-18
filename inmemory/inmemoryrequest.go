@@ -1,7 +1,6 @@
 package inmemory
 
 import (
-	"fmt"
 	"intertask/graphqlsh"
 	"sort"
 )
@@ -17,7 +16,9 @@ type InMemoryType struct {
 }
 
 // Memory record counter
-var RecordCounter = 1
+// Used to form ID.
+// ID numbers 1 to 9 are used for testing.
+var RecordCounter = 10
 
 // Structure for accessing to memory.
 type InMemoryStorage struct {
@@ -160,7 +161,17 @@ func (i *InMemoryStorage) FetchAllPosts(limit int, offset int) ([]graphqlsh.Post
 		return result[i].ID < result[j].ID
 	})
 
-	return result, nil
+	// Works with the length of the output slice.
+	if len(result) < offset-1 {
+		var empty []graphqlsh.Post
+		return empty, &MyError{}
+	}
+
+	if len(result) < offset+limit {
+		return result[offset-1:], nil
+	}
+
+	return result[offset-1 : offset+limit], nil
 }
 
 // Get a post and comments to it by ID from memory.
@@ -185,7 +196,6 @@ func (i *InMemoryStorage) FetchPostByiD(id int) (*graphqlsh.Post, error) {
 // Get comments for a specific post from memory.
 func (i *InMemoryStorage) FetchCommentsByPostID(id, limit, offset int) ([]graphqlsh.Comment, error) {
 
-	var err error
 	var result []graphqlsh.Comment
 	var toResult graphqlsh.Comment
 
@@ -211,19 +221,25 @@ func (i *InMemoryStorage) FetchCommentsByPostID(id, limit, offset int) ([]graphq
 
 	// Sorts the post slice in ascending order.
 	sort.Slice(result, func(i, j int) bool {
-		return result[i].PerentID < result[j].PerentID && result[i].ID < result[j].ID
+		return result[i].PerentID < result[j].PerentID && result[i].ID > result[j].ID
 	})
 
 	// Works with the length of the output slice.
 	if len(result) < offset-1 {
 		var empty []graphqlsh.Comment
-		fmt.Sprint("There are not so many comments.")
-		return empty, err
+		return empty, &MyError{}
 	}
 
 	if len(result) < offset+limit {
-		return result[offset:], nil
+		return result[offset-1:], nil
 	}
 
-	return result[offset : offset+limit], nil
+	return result[offset-1 : offset+limit], nil
+}
+
+// Structure for creating a non-standard error.
+type MyError struct{}
+
+func (m *MyError) Error() string {
+	return "There are not so many comments."
 }

@@ -27,10 +27,12 @@ type Blog interface {
 	UpdatePost(correctPost *Post) (*Post, error)
 }
 
+// The function that creates a type for sending queries to the database.
 func QueryType(storage Blog) *graphql.Object {
 	return graphql.NewObject(
 		graphql.ObjectConfig{
-			Name: "BlogQuery",
+			Name:        "BlogQuery",
+			Description: "Type for queries to search for posts.",
 			Fields: graphql.Fields{
 				"posts": getPosts(storage),
 				"post":  getPostWithComments(storage),
@@ -39,9 +41,11 @@ func QueryType(storage Blog) *graphql.Object {
 	)
 }
 
+// The function that creates a type to query the database to retrieve all posts.
 func getPosts(storage Blog) *graphql.Field {
 	return &graphql.Field{
-		Type: graphql.NewList(PostType),
+		Type:        graphql.NewList(PostType),
+		Description: "Type for queries to find all posts based on base type.",
 		Args: graphql.FieldConfigArgument{
 			"limit": &graphql.ArgumentConfig{
 				Type: graphql.Int,
@@ -67,9 +71,11 @@ func getPosts(storage Blog) *graphql.Field {
 	}
 }
 
+// The function that creates a type for sending queries to the database to retrieve a specific post and all comments on it.
 func getPostWithComments(storage Blog) *graphql.Field {
 	return &graphql.Field{
-		Type: CreatePostType(storage),
+		Type:        CreatePostType(storage),
+		Description: "Type for queries to find post by ID based on base type.",
 		Args: graphql.FieldConfigArgument{
 			"id": &graphql.ArgumentConfig{
 				Type: graphql.NewNonNull(graphql.Int),

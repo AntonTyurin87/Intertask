@@ -4,6 +4,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// Data structure for posts.
 type Post struct {
 	ID         int    `json:"id"`
 	Text       string `json:"text"`
@@ -11,6 +12,7 @@ type Post struct {
 	CanComment bool   `json:"cancomment"`
 }
 
+// Data structure for comments.
 type Comment struct {
 	ID       int    `json:"id"`
 	UserID   int    `json:"userid"`
@@ -19,15 +21,9 @@ type Comment struct {
 	PerentID int    `json:"perentid"`
 }
 
-type UserSubscription struct {
-	ID           int  `json:"id"`
-	UserID       int  `json:"userid"`
-	PostID       int  `json:"postid"`
-	Сonfirmation bool `json:"confirmation"`
-}
-
+// Basic type for posts.
 var PostType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Post",
+	Name: "Post_Base",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type: graphql.Int,
@@ -56,8 +52,9 @@ var PostType = graphql.NewObject(graphql.ObjectConfig{
 },
 )
 
+// Basic type for comments.
 var CommentType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Comment",
+	Name: "Comment_Base",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type: graphql.NewNonNull(graphql.Int),
@@ -77,6 +74,8 @@ var CommentType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+/*
+// Basic type for subscriptions. Probably not needed.
 var UserSubscriptionType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "UserSubscription",
 	Fields: graphql.Fields{
@@ -95,3 +94,4 @@ var UserSubscriptionType = graphql.NewObject(graphql.ObjectConfig{
 	},
 },
 )
+*/
