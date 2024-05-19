@@ -35,12 +35,16 @@ func main() {
 		storage = postgresdb.NewStorage(db)
 	}
 
-	schema, _ := graphql.NewSchema(
+	schema, err := graphql.NewSchema(
 		graphql.SchemaConfig{
 			Query:        graphqlsh.QueryType(storage),
 			Mutation:     graphqlsh.MutationType(storage),
 			Subscription: graphqlsh.SubscriptionType(storage),
 		})
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
 
 	handler3 := gqlhandler.New(&gqlhandler.Config{
 		Schema:     &schema,

@@ -44,32 +44,32 @@
 
 При настройках по умолчанию подключение на http://localhost:8080/graphql
 
-##### * Запрос на все посты, с ограничением по количеству и по номеру первого в выводе.
+### * Запрос на все посты, с ограничением по количеству и по номеру первого в выводе.
 <p align="left">
   <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_posts.jpg">
 </p>
 
-##### * Запрос на один пост с комментариями, с ограничением по количеству и по номеру первого в выводе.
+### * Запрос на один пост с комментариями, с ограничением по количеству и по номеру первого в выводе.
 <p align="left">
   <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_post.jpg">
 </p>
 
-##### * Запрос на создание поста.
+### * Запрос на создание поста.
 <p align="left">
   <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createpost.jpg">
 </p>
 
-##### * Запрос на изменение возможности комментирования поста.
+### * Запрос на изменение возможности комментирования поста.
 <p align="left">
   <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_commentstatus.jpg">
 </p>
 
-##### * Запрос на создание комментария к посту.
+### * Запрос на создание комментария к посту.
 <p align="left">
   <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createcomment.jpg">
 </p>
 
-##### * Запрос на создание потписки к посту.
+### * Запрос на создание потписки к посту.
 <p align="left">
   <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/subscription_post.jpg">
 </p>
