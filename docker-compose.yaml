@@ -9,7 +9,10 @@ services:
       - POSTGRES_PASSWORD=12345
       - POSTGRES_USER=admin
     volumes:
+          #Formation of a database with values ​​for testing.
       - ./postgresdb/sql/PostsComments.sql:/docker-entrypoint-initdb.d/PostsComments.sql
+          #Formation of an empty database with a table structure.
+    # - ./postgresdb/sql/EmptyDB.sql:/docker-entrypoint-initdb.d/EmptyDB.sql
     image: postgres:16.2-alpine3.19
 
   intertask:

@@ -25,6 +25,9 @@ type Blog interface {
 
 	// Makes a change to the post entry about the ability to comment the post in data storage.
 	UpdatePost(correctPost *Post) (*Post, error)
+
+	// Returns information about the ability to comment on a post.
+	ReternPostCommentStatus(id int) (bool, error)
 }
 
 // The function that creates a type for sending queries to the database.

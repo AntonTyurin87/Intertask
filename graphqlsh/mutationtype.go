@@ -156,7 +156,13 @@ func createComment(storage Blog) *graphql.Field {
 			}
 
 			// Intercept information about a new comment and send it to work for subscription.
-			NewComment(postid, newComment)
+
+			canCommentPost, _ := storage.ReternPostCommentStatus(postid)
+
+			if canCommentPost {
+				NewComment(postid, newComment)
+			}
+
 			return storage.CreateNewComment(&newComment)
 		},
 	}

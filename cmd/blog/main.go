@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"intertask/graphqlsh"
 	"intertask/handler"
 	"intertask/inmemory"
+	"intertask/postgresdb"
 
 	"github.com/graphql-go/graphql"
 	gqlhandler "github.com/graphql-go/graphql-go-handler"
@@ -14,14 +17,23 @@ import (
 
 func main() {
 
-	//var err error
+	var storage graphqlsh.Blog
 
-	//db, _ := postgresdb.InitDB()
+	//Set in Docker settings
+	boolValue := os.Getenv("IN_MEMORY")    //Operating system variable for selecting memory or database mode.
+	urlAdress := os.Getenv("POSTGRES_URL") //Operating system variable for generating a URL for connecting to the database.
 
-	var InMe []inmemory.InMemoryType
-
-	//storage := postgresdb.NewStorage(db)
-	storage := inmemory.NewInMemory(InMe)
+	if boolValue == "true" {
+		var InMe []inmemory.InMemoryType
+		storage = inmemory.NewInMemory(InMe)
+	} else {
+		db, err := postgresdb.InitDB(urlAdress)
+		if err != nil {
+			fmt.Println(err)
+			log.Fatal(err)
+		}
+		storage = postgresdb.NewStorage(db)
+	}
 
 	schema, _ := graphql.NewSchema(
 		graphql.SchemaConfig{

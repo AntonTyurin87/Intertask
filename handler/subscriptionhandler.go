@@ -32,6 +32,7 @@ type ConnectionACKMessage struct {
 	} `json:"payload,omitempty"`
 }
 
+// Handler for a new subscription.
 func NewSubscriptionHandler(schema graphql.Schema) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -60,6 +61,7 @@ func NewSubscriptionHandler(schema graphql.Schema) http.Handler {
 	})
 }
 
+// Creates a connection for working with a subscriptio
 func handleSubscription(conn *websocket.Conn, schema graphql.Schema) {
 	var subscriber *Subscriber
 	subscriptionCtx, subscriptionCancelFn := context.WithCancel(context.Background())
@@ -112,6 +114,7 @@ func subscribersSize() uint64 {
 	return size
 }
 
+// Unsubscribe from receiving asynchronous notifications.
 func unsubscribe(subscriptionCancelFn context.CancelFunc, subscriber *Subscriber) {
 	subscriptionCancelFn()
 	if subscriber != nil {
@@ -121,6 +124,7 @@ func unsubscribe(subscriptionCancelFn context.CancelFunc, subscriber *Subscriber
 	log.Printf("[SubscriptionsHandler] subscribers size: %+v", subscribersSize())
 }
 
+// Subscription from receiving asynchronous notifications.
 func subscribe(ctx context.Context, subscriptionCancelFn context.CancelFunc, conn *websocket.Conn, msg ConnectionACKMessage, schema graphql.Schema) *Subscriber {
 	subscriber := &Subscriber{
 		UUID:          uuid.New().String(),

@@ -30,6 +30,17 @@ func NewInMemory(InMe []InMemoryType) *InMemoryStorage {
 	return &InMemoryStorage{InMemory: InMe}
 }
 
+// Returns information about the ability to comment on a post.
+func (i *InMemoryStorage) ReternPostCommentStatus(id int) (bool, error) {
+
+	for _, value := range i.InMemory {
+		if value.ID == id {
+			return value.CanComment, nil
+		}
+	}
+	return false, nil
+}
+
 // Makes a change to the post entry about the ability to comment the post in memory.
 func (i *InMemoryStorage) UpdatePost(correctPost *graphqlsh.Post) (*graphqlsh.Post, error) {
 

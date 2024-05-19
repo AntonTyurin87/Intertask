@@ -70,6 +70,27 @@ func inMemoryModelDataCreator() *InMemoryStorage {
 	return storage
 }
 
+// Test function thats Returns information about the ability to comment on a post.
+func TestReternPostCommentStatus(t *testing.T) {
+	// The model data already has a slice with 6 records.
+	// The next entry will go under number 7.
+	// The next ID start by 10
+	storage := inMemoryModelDataCreator()
+
+	//In Data
+	id := 3
+
+	expected := false
+
+	//Out Data
+	actual, err := storage.ReternPostCommentStatus(id)
+	if err != nil {
+		t.Errorf("Should not produce an error")
+	}
+	assert.Equal(t, expected, actual)
+
+}
+
 // Test function thats "Makes a change to the post entry about the ability to comment the post in memory."
 func TestUpdatePost(t *testing.T) {
 

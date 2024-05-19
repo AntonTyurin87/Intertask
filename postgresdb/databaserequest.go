@@ -16,6 +16,31 @@ func NewStorage(db *sql.DB) *Storage {
 	return &Storage{DB: db}
 }
 
+// Returns information about the ability to comment on a post.
+func (s *Storage) ReternPostCommentStatus(id int) (bool, error) {
+
+	var сanComment bool
+
+	qeryToDB := fmt.Sprintf(`
+		SELECT cancomment 
+		FROM posts WHERE id = %d;`, id)
+
+	rows, err := s.DB.Query(qeryToDB)
+
+	if err != nil {
+		return false, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		// Writes the values ​​obtained from the PostgresQL database to the result.
+		if err = rows.Scan(&сanComment); err != nil {
+			return false, err
+		}
+	}
+	return сanComment, nil
+}
+
 // Makes a change to the post entry in the PostgresQL database about the ability to comment the post.
 func (s *Storage) UpdatePost(correctPost *graphqlsh.Post) (*graphqlsh.Post, error) {
 

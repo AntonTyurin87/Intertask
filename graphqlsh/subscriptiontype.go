@@ -25,17 +25,22 @@ func SubscriptionType(storage Blog) *graphql.Object {
 					ch := make(chan any)
 					postid, _ := params.Args["postid"].(int)
 
-					SubscribeToNewComments(postid, ch)
-					go func() {
-						for {
-							select {
-							case <-params.Context.Done():
-								UnsubscribeFromNewComments(postid, ch)
-								close(ch)
-								return
+					canCommentPost, _ := storage.ReternPostCommentStatus(postid)
+
+					//If you can't comment, then you won't be able to subscribe
+					if canCommentPost {
+						SubscribeToNewComments(postid, ch)
+						go func() {
+							for {
+								select {
+								case <-params.Context.Done():
+									UnsubscribeFromNewComments(postid, ch)
+									close(ch)
+									return
+								}
 							}
-						}
-					}()
+						}()
+					}
 					// Returns the go channel.
 					return ch, nil
 				},

@@ -49,6 +49,50 @@ func DBGenerate() (*sql.DB, *Storage, error) {
 	return db, storage, err
 }
 
+func TestReternPostCommentStatus(t *testing.T) {
+
+	db, storage, err := DBGenerate()
+	if err != nil {
+		fmt.Println(err)
+		t.Errorf("The database is not connected")
+	}
+
+	// In Data
+
+	id := 13
+
+	qeryToDB := "SELECT cancomment FROM posts WHERE id = 13;"
+
+	// Query to the model database.
+	rows, err := db.Query(qeryToDB)
+	if err != nil {
+		fmt.Println(err)
+		t.Errorf("The database request failed.")
+	}
+
+	var actual bool
+
+	for rows.Next() {
+		if err = rows.Scan(&actual); err != nil {
+			fmt.Print(err)
+			t.Errorf("The database request failed.")
+		}
+	}
+	defer db.Close()
+
+	expected := false
+
+	//Out Data
+	fromBase, err := storage.ReternPostCommentStatus(id)
+	if err != nil {
+		fmt.Println(err)
+		t.Errorf("The function being tested does not work!")
+	}
+
+	assert.Equal(t, actual, expected, fromBase)
+
+}
+
 // Test function thats updates the status for the ability to comment on the post.
 func TestUpdatePost(t *testing.T) {
 
