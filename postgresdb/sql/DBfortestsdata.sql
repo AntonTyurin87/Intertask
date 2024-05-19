@@ -1,3 +1,27 @@
+CREATE TABLE "users" (
+  "id" integer PRIMARY KEY AUTOINCREMENT,
+  "name" varchar(128)
+);
+
+CREATE TABLE "posts" (
+  "id" integer PRIMARY KEY AUTOINCREMENT,
+  "text" text,
+  "userid" integer,
+  "cancomment" boolean,
+  FOREIGN KEY (userid) REFERENCES users(id)
+);
+
+CREATE TABLE "comments" (
+  "id" integer PRIMARY KEY AUTOINCREMENT,
+  "userid" integer,
+  "text" varchar(2000),
+  "postid" integer,
+  "perentid" integer,
+  FOREIGN KEY (userid) REFERENCES users(id),
+  FOREIGN KEY (postid) REFERENCES posts(id),
+  FOREIGN KEY (perentid) REFERENCES comments(id)
+);
+
 
 INSERT INTO "users" (name) VALUES ('Пользователь_1');
 INSERT INTO "users" (name) VALUES ('Пользователь_2');

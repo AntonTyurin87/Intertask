@@ -61,19 +61,38 @@ func (s *Storage) CreateNewComment(newComment *graphqlsh.Comment) (*graphqlsh.Co
 	var err error
 	var rows *sql.Rows
 	var result graphqlsh.Comment
-	var comentstatus string
+	//var comentstatus string
+
+	/*
+		qeryToDB := fmt.Sprintf(`
+				SELECT cancomment
+				FROM posts WHERE
+				id = %d;`, newComment.PostID)
+	*/
 
 	qeryToDB := fmt.Sprintf(`
-		SELECT cancomment
-			FROM posts WHERE
-			id = %d;`, newComment.PostID)
+			SELECT id, text, userid, cancomment 
+			FROM posts WHERE id = %d;`,
+		newComment.PostID)
 
 	// Requests the status of the post for the possibility of commenting.
-	err = s.DB.QueryRow(qeryToDB).Scan(&comentstatus)
-
-	// If comments cannot be made, then an empty value is returned.
-	if err != nil || comentstatus == "false" {
+	rows, err = s.DB.Query(qeryToDB)
+	if err != nil {
 		return nil, err
+	}
+	defer rows.Close()
+
+	var postForComment graphqlsh.Post
+
+	for rows.Next() {
+		// Writes the values ​​obtained from the PostgresQL database to the result.
+		if err = rows.Scan(&postForComment.ID, &postForComment.Text, &postForComment.UserID, &postForComment.CanComment); err != nil {
+			return nil, err
+		}
+	}
+
+	if !postForComment.CanComment {
+		return &result, err
 	}
 
 	// Trim the string to the maximum character value
@@ -179,6 +198,7 @@ func (s *Storage) FetchAllPosts(limit int, offset int) ([]graphqlsh.Post, error)
 		}
 		result = append(result, b)
 	}
+
 	return result, nil
 }
 
