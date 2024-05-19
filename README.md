@@ -29,13 +29,13 @@
 # Docker параметры
 
 * Настройка выбора пустой базы данных или с предзаписанными данными для ручного тестирования.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/DB.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/DB.jpg">
 </p>
 
 * Настройки для выбора режима работы из памияти или из базы данных PostgresQL. По умолчанию переменная "IN_MEMORY=false". При задании значения "IN_MEMORY=true" приложение не подключается к PostgresQL.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/Chenge.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/Chenge.jpg">
 </p>
 
 # Работа с Intertask по средствам GraphQL Playground for Chrome
@@ -45,31 +45,31 @@
 При настройках по умолчанию подключение на http://localhost:8080/graphql
 
 ##### Запрос на все посты, с ограничением по количеству и по номеру первого в выводе.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_posts.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_posts.jpg">
 </p>
 
 ##### Запрос на один пост с комментариями, с ограничением по количеству и по номеру первого в выводе.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_post.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_post.jpg">
 </p>
 
 ##### Запрос на создание поста.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createpost.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createpost.jpg">
 </p>
 
 ##### Запрос на изменение возможности комментирования поста.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_commentstatus.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_commentstatus.jpg">
 </p>
 
 ##### Запрос на создание комментария к посту.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createcomment.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createcomment.jpg">
 </p>
 
 ##### Запрос на создание потписки к посту.
-<p align="center">
-  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/subscription_post.jpg">
+<p align="left">
+  <img src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/subscription_post.jpg">
 </p>
