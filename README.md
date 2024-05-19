@@ -21,14 +21,55 @@
 
 # Описание реализации Intertask
 
-// Здесь будет текст про принцип реализации и технологии
-// Здесь будет что-то про БД и её структуру
+Приложение Intertask на вход принимает строку с POST запросом. На выходе предоставляет данные, в соответствии со структурой запроса. Формирование запросов, ответов и обновлений состояния подписки осуществляется по средствам GraphQL. При получении корректного запроса приложение обращается к базе данных и возвращает ответ. Параметры пагинации принимаются в запросе, а так же ограничены значениями по умолчанию.
+При создании подписки уведомление о новом комментарии приходят в том случае, если комментировать выбранный пост возможно. Уведомления приходят в асинхронном режиме.
+Возможна как работа приложения с базой данных PostgresQL, так и из памяти. Работа с хранилищем реализована через интерфейс "Blog".
+Приложение Intertask может быть развернуто по средствам Docker.
 
-# Распаковка и установка Intertask
+# Docker параметры
 
-// Здесь будет про настройки скриптов и про образ Docker
+* Настройка выбора пустой базы данных или с предзаписанными данными для ручного тестирования.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/DB.jpg">
+</p>
 
-# Работа с Intertask
+* Настройки для выбора режима работы из памияти или из базы данных PostgresQL. По умолчанию переменная "IN_MEMORY=false". При задании значения "IN_MEMORY=true" приложение не подключается к PostgresQL.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/Chenge.jpg">
+</p>
 
-// Здесь будет про описание входных и выходных данных
-// Здесь будет описание ошибок
+# Работа с Intertask по средствам GraphQL Playground for Chrome
+
+#### <c> [Схема приложения из Playground](https://github.com/AntonTyurin87/Intertask/blob/main/docs/introspectionSchema.json) </c>
+
+При настройках по умолчанию подключение на http://localhost:8080/graphql
+
+##### Запрос на все посты, с ограничением по количеству и по номеру первого в выводе.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_posts.jpg">
+</p>
+
+##### Запрос на один пост с комментариями, с ограничением по количеству и по номеру первого в выводе.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/query_post.jpg">
+</p>
+
+##### Запрос на создание поста.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createpost.jpg">
+</p>
+
+##### Запрос на изменение возможности комментирования поста.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_commentstatus.jpg">
+</p>
+
+##### Запрос на создание комментария к посту.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/mutatuin_createcomment.jpg">
+</p>
+
+##### Запрос на создание потписки к посту.
+<p align="center">
+  <img width="400" height="250" src="https://github.com/AntonTyurin87/Intertask/blob/main/docs/imeges/subscription_post.jpg">
+</p>
