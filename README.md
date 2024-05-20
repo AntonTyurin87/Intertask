@@ -13,7 +13,7 @@
 
 <c> [подробное задание и критерии оценки](https://github.com/AntonTyurin87/Intertask/blob/main/docs/task_text.md) </c>
 
-<c> [анализ заданяи](https://github.com/AntonTyurin87/Intertask/blob/main/docs/analisis.md) </c>
+<c> [анализ задания](https://github.com/AntonTyurin87/Intertask/blob/main/docs/analisis.md) </c>
 
 <c> [план выполнения](https://github.com/AntonTyurin87/Intertask/blob/main/docs/work_plan.md) </c>
 
