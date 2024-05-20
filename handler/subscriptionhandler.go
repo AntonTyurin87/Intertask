@@ -1,6 +1,6 @@
 package handler
 
-// The solution was copied and adapted to the problem. Source:
+// The solution was copied and adapted to my task. Source:
 // https://github.com/graphql-go/subscription-example/blob/main/main.go
 
 import (
