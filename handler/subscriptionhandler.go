@@ -32,7 +32,7 @@ type ConnectionACKMessage struct {
 	} `json:"payload,omitempty"`
 }
 
-// Handler for a new subscription.
+// Handler for a new subscription using websocket.
 func NewSubscriptionHandler(schema graphql.Schema) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -57,6 +57,7 @@ func NewSubscriptionHandler(schema graphql.Schema) http.Handler {
 			return
 		}
 
+		//Start a new goroutine to handle the connection.
 		go handleSubscription(conn, schema)
 	})
 }

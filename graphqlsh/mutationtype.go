@@ -7,11 +7,13 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// Variable for storing channels for subscribing to a post. The key is the post ID.
 var (
 	mx                   sync.Mutex
 	commentSubscriptions = map[int][]chan any{}
 )
 
+// Subscribe to a new comment on a post.
 func SubscribeToNewComments(postID int, ch chan any) {
 	mx.Lock()
 
@@ -20,6 +22,7 @@ func SubscribeToNewComments(postID int, ch chan any) {
 	mx.Unlock()
 }
 
+// Unsubscribe from new comments
 func UnsubscribeFromNewComments(postID int, ch chan any) {
 	mx.Lock()
 
@@ -29,6 +32,7 @@ func UnsubscribeFromNewComments(postID int, ch chan any) {
 	mx.Unlock()
 }
 
+// New comment to post by subscription
 func NewComment(postID int, newComment any) {
 	mx.Lock()
 

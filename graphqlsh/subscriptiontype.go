@@ -33,6 +33,7 @@ func SubscriptionType(storage Blog) *graphql.Object {
 						go func() {
 							for {
 								select {
+								// The context is broken as soon as the websocket connection is completed.
 								case <-params.Context.Done():
 									UnsubscribeFromNewComments(postid, ch)
 									close(ch)
