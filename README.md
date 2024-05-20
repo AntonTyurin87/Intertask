@@ -11,7 +11,7 @@
 
 Реализовать систему для добавления и чтения постов и комментариев с использованием GraphQL, аналогичную комментариям к постам на популярных платформах, таких как Хабр или Reddit.
 
-<c>[подробное задание и критерии оценки](https://github.com/AntonTyurin87/Intertask/blob/main/docs/task_text.md)</c>
+<c> [подробное задание и критерии оценки](https://github.com/AntonTyurin87/Intertask/blob/main/docs/task_text.md) </c>
 
 <c> [анализ заданяи](https://github.com/AntonTyurin87/Intertask/blob/main/docs/analisis.md) </c>
 
